@@ -39,9 +39,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>コンカフェを探すためだけのアプリ</h1>
-      <div>
+    <div
+      style={{
+        fontFamily: "Arial, sans-serif",
+        color: "#fff",
+        backgroundColor: "#000",
+        minHeight: "100vh",
+        padding: "20px",
+        textAlign: "center",
+      }}
+    >
+      <h1>❤️コンカフェを探すためだけのアプリ❤️</h1>
+      <div style={{ textAlign: "center" }}>
         <label htmlFor="region">検索したい地域:</label>
         <input
           id="region"
@@ -49,21 +58,35 @@ const App: React.FC = () => {
           value={region}
           onChange={(e) => setRegion(e.target.value)}
           placeholder="地域を入力"
+          style={{ marginRight: "10px", padding: "8px", borderRadius: "4px" }}
         />
+        <button
+          onClick={handleSearch}
+          style={{
+            padding: "8px 16px",
+            borderRadius: "4px",
+            border: "none",
+            backgroundColor: "#333",
+            color: "#fff",
+          }}
+        >
+          検索
+        </button>
       </div>
-      <button onClick={handleSearch}>検索</button>
-      <div>
-        {error && <p>{error}</p>}
-        <h2>検索結果</h2>
+      <div style={{ marginTop: "20px" }}>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        <h2 style={{ textAlign: "center" }}>検索結果</h2>
         {results.length > 0 ? (
-          <div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "20px",justifyContent: "center", }}>
             {results.map((item, index) => (
               <div
                 key={index}
                 style={{
-                  marginBottom: "20px",
-                  display: "flex",
-                  alignItems: "center",
+                  backgroundColor: "#222",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  maxWidth: "300px",
+                  flex: "1 1 auto",
                 }}
               >
                 {item.pagemap?.cse_image &&
@@ -72,24 +95,24 @@ const App: React.FC = () => {
                       src={item.pagemap.cse_image[0].src}
                       alt={item.title}
                       style={{
-                        maxWidth: "200px",
+                        maxWidth: "100%",
                         maxHeight: "150px",
-                        marginRight: "10px",
+                        borderRadius: "8px",
+                        marginBottom: "10px",
                       }}
                     />
                   )}
-                <div>
-                  <h3>
-                    <a
-                      href={item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {item.title}
-                    </a>
-                  </h3>
-                  <p>{item.snippet}</p>
-                </div>
+                <h3 style={{ margin: "0", fontSize: "1.2em" }}>
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#1e90ff", textDecoration: "none" }}
+                  >
+                    {item.title}
+                  </a>
+                </h3>
+                <p>{item.snippet}</p>
               </div>
             ))}
           </div>
