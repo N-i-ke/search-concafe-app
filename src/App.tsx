@@ -2,26 +2,28 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const App: React.FC = () => {
-  const [query, setQuery] = useState<string>("コンカフェ");
+  const [region, setRegion] = useState<string>(""); // 地区を管理するステート
   const [results, setResults] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   // 環境変数からAPIキーを取得
   const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+  const searchEngineId = process.env.REACT_APP_CUSTOM_SEARCH_ENGINE_ID;
 
-  // APIキーが設定されているか確認
-  if (!apiKey) {
-    return <div>APIキーが設定されていません。</div>;
+  // APIキーとSearch Engine IDが設定されているか確認
+  if (!apiKey || !searchEngineId) {
+    return <div>APIキーまたはカスタム検索エンジンIDが設定されていません。</div>;
   }
 
   const handleSearch = () => {
     const baseUrl = "https://www.googleapis.com/customsearch/v1";
-    const searchEngineId = process.env.REACT_APP_CUSTOM_SEARCH_ENGINE_ID; // Custom Search Engine IDをここに入れます
+
+    // クエリを「コンカフェ」とユーザーの入力した地区を組み合わせる
+    const query = `コンカフェ ${region}`;
 
     const url = `${baseUrl}?key=${apiKey}&cx=${searchEngineId}&q=${encodeURIComponent(
       query
     )}`;
-
 
     axios
       .get(url)
@@ -38,14 +40,15 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <h1>コンカフェ検索アプリ</h1>
+      <h1>コンカフェを探すためだけのアプリ</h1>
       <div>
-        <label htmlFor="query">検索キーワード:</label>
+        <label htmlFor="region">検索したい地域:</label>
         <input
-          id="query"
+          id="region"
           type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
+          placeholder="地域を入力"
         />
       </div>
       <button onClick={handleSearch}>検索</button>
@@ -57,7 +60,11 @@ const App: React.FC = () => {
             {results.map((item, index) => (
               <div
                 key={index}
-                style={{ marginBottom: "20px", display: "flex" }}
+                style={{
+                  marginBottom: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
               >
                 {item.pagemap?.cse_image &&
                   item.pagemap.cse_image.length > 0 && (
@@ -67,16 +74,22 @@ const App: React.FC = () => {
                       style={{
                         maxWidth: "200px",
                         maxHeight: "150px",
-                        marginBottom: "10px",
+                        marginRight: "10px",
                       }}
                     />
                   )}
-                <h3>
-                  <a href={item.link} target="_blank" rel="noopener noreferrer">
-                    {item.title}
-                  </a>
-                </h3>
-                <p>{item.snippet}</p>
+                <div>
+                  <h3>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.title}
+                    </a>
+                  </h3>
+                  <p>{item.snippet}</p>
+                </div>
               </div>
             ))}
           </div>
